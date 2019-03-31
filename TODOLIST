@@ -1,0 +1,17 @@
+Tâches :
+
+1. Intégrer l'utilisation de la fonction surfbez avec la classe discrétisation
+
+2. Penser au rendu par triangle pour la courbe
+
+3. Faire un slider(ou autre) pour parcourir l'espace paramétrique et afficher les points correspondants
+
+4. (optionnel) courbe chaikin
+
+5. Visualiser un ou plusieurs carreaux (voir ametice)
+
+6. Convertir un carreau en un fichier .OBJ
+
+7. (bonus) utilisation de surface bspline
+
+8. (bonus) raccorder 2 carreaux de béziers
