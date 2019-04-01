@@ -193,40 +193,33 @@ void myOpenGLWidget::makeGLObjects()
 
     //1 Nos objets géométriques
     Point A;
-    QVector<Point> points;
     float test,test1, test2, test3;
     srand(time(nullptr));
-    for (int i = 0; i < 4; ++i) {
-        test1 = (float)(rand()%(100+100 + 1) -100) / 100;
-        test2 = (float)(rand()%(100+100+ 1) -100)/ 100;
-        test3 = (float)(rand()%(100+100 + 1) -100)/ 100;;
-        A.setX(test1);
-        A.setY(test2);
-        A.setZ(test3);
-        vertData.push_back(A.getX());
-        vertData.push_back(A.getY());
-        vertData.push_back(A.getZ());
-        vertData.push_back(1);
-        vertData.push_back(1);
-        vertData.push_back(1);
-        points.push_back(A);
-    }
 
-    courbe c;
+    surface c;
+    QVector<Point> points = c.CreateControlPoint(sqrt(ctrlPts));
     QVector<Point> vertices = c.surfBez(points,0.05,sqrt(ctrlPts));
 
-    //vertices += points;
+    for (int var = 0; var < points.size(); ++var) {
+        vertData.push_back(points[var].getX());
+        vertData.push_back(points[var].getY());
+        vertData.push_back(points[var].getZ());
+        for (int var2 = 0; var2 < 3; ++var2) {
+            vertData.push_back(1);
+        }
+    }
+
     //3 spécialisation OpenGL
     for (int i = 0; i < vertices.size(); ++i) { //2 sommets
         // coordonnées sommets
         vertData.push_back(vertices[i].getX());
         vertData.push_back(vertices[i].getY());
         vertData.push_back(vertices[i].getZ());
-        for (int j = 0; j < 3; j++){ //1 RGB par sommet
-            test = (float)( rand() % 100) / 100;
-            vertData.push_back(test);
-        }
-        //qDebug() << "x : "<<vertices[i].getX()<<" y : "<<vertices[i].getY()<<" z : "<<vertices[i].getZ()<<endl;
+
+        vertData.push_back(1);
+        vertData.push_back(0);
+        vertData.push_back(0);
+            //qDebug() << "x : "<<vertices[i].getX()<<" y : "<<vertices[i].getY()<<" z : "<<vertices[i].getZ()<<endl;
     }
 
     m_vbo.create();
@@ -290,9 +283,10 @@ void myOpenGLWidget::paintGL()
 	m_program->enableAttributeArray("posAttr");
 	m_program->enableAttributeArray("colAttr");
 
-	glPointSize (5.0f);
+    glPointSize (5.0f);
     glDrawArrays(GL_POINTS, 0, ctrlPts);
-    glDrawArrays(GL_POINTS, ctrlPts*6,vertData.size()-(ctrlPts*6));
+    glPointSize (2.0f);
+    glDrawArrays(GL_POINTS, ctrlPts,vertData.size()-(ctrlPts));
 
 	m_program->disableAttributeArray("posAttr");
 	m_program->disableAttributeArray("colAttr");
