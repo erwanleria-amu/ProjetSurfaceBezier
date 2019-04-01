@@ -12,7 +12,8 @@
 #include <QOpenGLShaderProgram>
 
 #include "discretisation.h"
-#include "courbe.h"
+#include "surfacesbezier.h"
+#include "courbes.h"
 #include "math.h"
 
 class myOpenGLWidget : public QOpenGLWidget,
@@ -49,7 +50,7 @@ private:
 	double m_ratio = 1;
 
 
-    int ctrlPts = 4;
+    int ctrlPts = 9;
 
 	//RR matrices utiles
 	QMatrix4x4 m_modelView;

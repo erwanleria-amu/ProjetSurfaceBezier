@@ -34,6 +34,8 @@ SOURCES += \
     point.cpp \
     discretisation.cpp \
     courbe.cpp \
+    courbes.cpp \
+    surfacesbezier.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,6 +44,8 @@ HEADERS += \
     point.h \
     discretisation.h \
     courbe.h \
+    courbes.h \
+    surfacesbezier.h
 
 FORMS += \
         mainwindow.ui

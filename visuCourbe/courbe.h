@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include "point.h"
+
 class courbe
 {
 public:
