@@ -92,6 +92,27 @@ Point discretizeSeg(float s, void * obj)
     return *n_paramPoint;
 }
 
+Point discretizeSurfBez(float s, float t, void * obj)
+{
+    QVector<Point> vecPts;
+    Point pt ;
+    pt.setX(0);
+    pt.setY(0);
+    pt.setZ(0);
+    Point tmpoint = pt;
+
+    qDebug() << ((SurfacesBezier *) obj)->n << endl;
+
+    for (int i = 0; i < ((SurfacesBezier *) obj)->n; ++i) {
+        for (int j = 0; j < ((SurfacesBezier *) obj)->n; ++j) {
+            Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* (((SurfacesBezier *) obj)->n) +j];
+            tmpoint = tmpoint + (mul * Courbes::bern(i, (((SurfacesBezier *) obj)->n-1) , s) * Courbes::bern(j, (((SurfacesBezier *) obj)->n-1), t)) ;
+        }
+    }
+    qDebug() << "return" << endl;
+    return  tmpoint;
+}
+
 QVector<GLfloat> vertData;
 void myOpenGLWidget::makeGLObjects()
 {
@@ -196,7 +217,7 @@ void myOpenGLWidget::makeGLObjects()
     QVector<Point> points;
     float test,test1, test2, test3;
     srand(time(nullptr));
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < ctrlPts; ++i) {
         test1 = (float)(rand()%(100+100 + 1) -100) / 100;
         test2 = (float)(rand()%(100+100+ 1) -100)/ 100;
         test3 = (float)(rand()%(100+100 + 1) -100)/ 100;;
@@ -212,29 +233,33 @@ void myOpenGLWidget::makeGLObjects()
         points.push_back(A);
     }
 
-    courbe c;
-    QVector<Point> vertices = c.surfBez(points,0.05,sqrt(ctrlPts));
 
-    //vertices += points;
-    //3 spécialisation OpenGL
-    for (int i = 0; i < vertices.size(); ++i) { //2 sommets
-        // coordonnées sommets
-        vertData.push_back(vertices[i].getX());
-        vertData.push_back(vertices[i].getY());
-        vertData.push_back(vertices[i].getZ());
-        for (int j = 0; j < 3; j++){ //1 RGB par sommet
-            test = (float)( rand() % 100) / 100;
-            vertData.push_back(test);
-        }
-        //qDebug() << "x : "<<vertices[i].getX()<<" y : "<<vertices[i].getY()<<" z : "<<vertices[i].getZ()<<endl;
-    }
+
+    //Discrétisation de la surface à partir des points de controle
+    //précédemment créés
+
+    SurfacesBezier sb(&points);
+    qDebug() << "sb points" << endl;
+
+    Discretisation discreteSurfBez(discretizeSurfBez, 0.01f);
+    qDebug() << "include discretefunc ok" << endl;
+
+    discreteSurfBez.paramsCompute2((void *) &sb);
+    qDebug() << "compute params ok" << endl;
+
+    QVector<float> colors;
+
+    colors.push_back(1); colors.push_back(0); colors.push_back(0);
+
+    qDebug() << "colors OK" << endl;
+
+    discreteSurfBez.paramToVBO(colors);
 
     m_vbo.create();
     m_vbo.bind();
 
     //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
-    m_vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
-
+    m_vbo.allocate(discreteSurfBez.VBO.constData(), discreteSurfBez.VBO.count() * sizeof(GLfloat));
 }
 
 
@@ -292,7 +317,7 @@ void myOpenGLWidget::paintGL()
 
 	glPointSize (5.0f);
     glDrawArrays(GL_POINTS, 0, ctrlPts);
-    glDrawArrays(GL_POINTS, ctrlPts*6,vertData.size()-(ctrlPts*6));
+    //glDrawArrays(GL_POINTS, ctrlPts*6,vertData.size()-(ctrlPts*6));
 
 	m_program->disableAttributeArray("posAttr");
 	m_program->disableAttributeArray("colAttr");
