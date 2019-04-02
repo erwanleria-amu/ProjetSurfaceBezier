@@ -15,6 +15,7 @@
 #include "surfacesbezier.h"
 #include "courbes.h"
 #include "math.h"
+#include "surface.h"
 
 class myOpenGLWidget : public QOpenGLWidget,
 			   protected QOpenGLFunctions

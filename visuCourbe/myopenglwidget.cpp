@@ -101,22 +101,19 @@ Point discretizeSurfBez(float s, float t, void * obj)
     pt.setZ(0);
     Point tmpoint = pt;
 
-    qDebug() << ((SurfacesBezier *) obj)->n << endl;
-
     for (int i = 0; i < ((SurfacesBezier *) obj)->n; ++i) {
         for (int j = 0; j < ((SurfacesBezier *) obj)->n; ++j) {
             Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* (((SurfacesBezier *) obj)->n) +j];
             tmpoint = tmpoint + (mul * Courbes::bern(i, (((SurfacesBezier *) obj)->n-1) , s) * Courbes::bern(j, (((SurfacesBezier *) obj)->n-1), t)) ;
         }
     }
-    qDebug() << "return" << endl;
     return  tmpoint;
 }
 
-QVector<GLfloat> vertData;
+QVector<GLfloat> globalVBO;
 void myOpenGLWidget::makeGLObjects()
 {
-#if 0 //TEST SEGMENT
+#if 0 //TEST SEGMENT (obsolete car fonctions modifiées)
 	//1 Nos objets géométriques
 	Point A, B;
 	float * coord = new float[3];
@@ -210,29 +207,17 @@ void myOpenGLWidget::makeGLObjects()
     m_vbo.allocate(discreteSegment.VBO.constData(), discreteSegment.VBO.count() * sizeof(GLfloat));
     #endif
 
-    //TEST COURBES
+    //TEST COURBES CARREAUX
 
     //1 Nos objets géométriques
     Point A;
-    QVector<Point> points;
     float test,test1, test2, test3;
     srand(time(nullptr));
-    for (int i = 0; i < ctrlPts; ++i) {
-        test1 = (float)(rand()%(100+100 + 1) -100) / 100;
-        test2 = (float)(rand()%(100+100+ 1) -100)/ 100;
-        test3 = (float)(rand()%(100+100 + 1) -100)/ 100;;
-        A.setX(test1);
-        A.setY(test2);
-        A.setZ(test3);
-        vertData.push_back(A.getX());
-        vertData.push_back(A.getY());
-        vertData.push_back(A.getZ());
-        vertData.push_back(1);
-        vertData.push_back(1);
-        vertData.push_back(1);
-        points.push_back(A);
-    }
 
+    surface c;
+    QVector<Point> points = c.CreateControlPoint(sqrt(ctrlPts));
+
+    //QVector<Point> vertices = c.surfBez(points,0.05,sqrt(ctrlPts));
 
 
     //Discrétisation de la surface à partir des points de controle
@@ -241,25 +226,36 @@ void myOpenGLWidget::makeGLObjects()
     SurfacesBezier sb(&points);
     qDebug() << "sb points" << endl;
 
-    Discretisation discreteSurfBez(discretizeSurfBez, 0.01f);
+    Discretisation *discreteSurfBez = new Discretisation(discretizeSurfBez, 0.01f); //Le deuxième argument est le pas des paramètres
     qDebug() << "include discretefunc ok" << endl;
+    this->curDiscreteObj = discreteSurfBez; //On indique la structure discrète utilisée pour le programme
 
-    discreteSurfBez.paramsCompute2((void *) &sb);
+    discreteSurfBez->paramsCompute2((void *) &sb);
     qDebug() << "compute params ok" << endl;
 
     QVector<float> colors;
-
     colors.push_back(1); colors.push_back(0); colors.push_back(0);
-
     qDebug() << "colors OK" << endl;
 
-    discreteSurfBez.paramToVBO(colors);
+    discreteSurfBez->paramToVBO(colors);
+
+
+    for (int var = 0; var < points.size(); ++var) {
+        globalVBO.push_back(points[var].getX());
+        globalVBO.push_back(points[var].getY());
+        globalVBO.push_back(points[var].getZ());
+        for (int var2 = 0; var2 < 3; ++var2) {
+            globalVBO.push_back(1);
+        }
+    }
 
     m_vbo.create();
     m_vbo.bind();
 
-    //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
-    m_vbo.allocate(discreteSurfBez.VBO.constData(), discreteSurfBez.VBO.count() * sizeof(GLfloat));
+    //qDebug() << "globalVBO " << globalVBO.count () << " " << vertData.data ();
+    //qDebug() << "makegl " << discreteSurfBez->VBO.count() << endl;
+    globalVBO.append(discreteSurfBez->VBO);
+    m_vbo.allocate(globalVBO.data(), globalVBO.count() * sizeof(GLfloat));
 }
 
 
@@ -315,9 +311,11 @@ void myOpenGLWidget::paintGL()
 	m_program->enableAttributeArray("posAttr");
 	m_program->enableAttributeArray("colAttr");
 
-	glPointSize (5.0f);
+    glPointSize (5.0f);
     glDrawArrays(GL_POINTS, 0, ctrlPts);
-    //glDrawArrays(GL_POINTS, ctrlPts*6,vertData.size()-(ctrlPts*6));
+
+    glPointSize (2.0f);
+    glDrawArrays(GL_POINTS, ctrlPts, curDiscreteObj->paramPoints->length());
 
 	m_program->disableAttributeArray("posAttr");
 	m_program->disableAttributeArray("colAttr");
