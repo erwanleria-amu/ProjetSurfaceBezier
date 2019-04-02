@@ -6,6 +6,9 @@ class Surfaces
 {
 public:
     Surfaces();
+
+    QVector<Point> surfBez(QVector<Point> points, float t, int nbcol);
+
 };
 
 #endif // SURFACES_H
