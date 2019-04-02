@@ -19,7 +19,6 @@ Segment::Segment(const Segment & s)
 
 	for (unsigned i=0; i<2; ++i)
 		pointList[i] = s.pointList[i];
-
 }
 
 void Segment::setStart(const Point & p)
