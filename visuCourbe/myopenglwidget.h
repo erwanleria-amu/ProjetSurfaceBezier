@@ -40,6 +40,7 @@ signals:  // On ne les implémente pas, elles seront générées par MOC ;
 protected slots:
 	void onTimeout();
 
+
 protected:
 	void initializeGL() override;
 	void doProjection();
@@ -51,6 +52,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *ev) override;
 	void mouseMoveEvent(QMouseEvent *ev) override;
     QVector<Point> pointsCtrl;
+
 
 private:
 	double m_angle = 0;

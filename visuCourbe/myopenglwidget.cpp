@@ -109,7 +109,6 @@ Point discretizeSurfBez(float s, float t, void * obj)
     return  tmpoint;
 }
 
-QVector<GLfloat> globalVBO;
 void myOpenGLWidget::makeGLObjects()
 {
 
@@ -217,7 +216,6 @@ void myOpenGLWidget::makeGLObjects()
 
     //QVector<Point> vertices = c.surfBez(points,0.05,sqrt(nbCol*nbCol));
 
-
     //Discrétisation de la surface à partir des points de controle
     //précédemment créés
 
@@ -243,13 +241,20 @@ void myOpenGLWidget::makeGLObjects()
     }
 
     deplacement = setDeplacementPoint(u,v);
+    vertData.push_back(deplacement.getX());
+    vertData.push_back(deplacement.getY());
+    vertData.push_back(deplacement.getZ());
+
+    vertData.push_back(0);
+    vertData.push_back(0);
+    vertData.push_back(1);
 
     for (int var = 0; var < pointsCtrl.size(); ++var) {
-        globalVBO.push_back(deplacement.getX());
-        globalVBO.push_back(deplacement.getY());
-        globalVBO.push_back(deplacement.getZ());
+        vertData.push_back(pointsCtrl[var].getX());
+        vertData.push_back(pointsCtrl[var].getY());
+        vertData.push_back(pointsCtrl[var].getZ());
         for (int var2 = 0; var2 < 3; ++var2) {
-            globalVBO.push_back(1);
+            vertData.push_back(1);
         }
     }
 
@@ -257,10 +262,10 @@ void myOpenGLWidget::makeGLObjects()
     m_vbo.create();
     m_vbo.bind();
 
-    //qDebug() << "globalVBO " << globalVBO.count () << " " << vertData.data ();
+    //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
     //qDebug() << "makegl " << discreteSurfBez->VBO.count() << endl;
-    globalVBO.append(discreteSurfBez->VBO);
-    m_vbo.allocate(globalVBO.data(), globalVBO.count() * sizeof(GLfloat));
+    vertData.append(discreteSurfBez->VBO);
+    m_vbo.allocate(vertData.data(), vertData.count() * sizeof(GLfloat));
 }
 
 
@@ -317,7 +322,7 @@ void myOpenGLWidget::paintGL()
     m_program->enableAttributeArray("colAttr");
 
     glPointSize (5.0f);
-    glDrawArrays(GL_POINTS, 0, nbCol*nbCol);
+    glDrawArrays(GL_POINTS, 0, nbCol*nbCol+1);
 
     glPointSize (2.0f);
     glDrawArrays(GL_POINTS, nbCol*nbCol, curDiscreteObj->paramPoints->length());
