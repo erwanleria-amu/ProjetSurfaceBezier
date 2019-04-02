@@ -330,6 +330,7 @@ void myOpenGLWidget::paintGL()
     m_program->disableAttributeArray("posAttr");
     m_program->disableAttributeArray("colAttr");
 
+    vertData.clear();
     m_program->release();
 }
 
