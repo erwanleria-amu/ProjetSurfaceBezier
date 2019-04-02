@@ -8,6 +8,7 @@ surface::surface()
 
 }
 
+//Non utilisée
 QVector<Point> surface::surfBez(QVector<Point> points, float t, int nbcol)
 {
     courbe c;

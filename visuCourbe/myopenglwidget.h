@@ -51,7 +51,8 @@ private:
 	double m_ratio = 1;
 
 
-    int ctrlPts = 9;
+    int ctrlPts = 10;
+    Discretisation *curDiscreteObj;
 
 	//RR matrices utiles
 	QMatrix4x4 m_modelView;
