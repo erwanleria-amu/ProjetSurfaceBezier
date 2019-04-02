@@ -58,3 +58,13 @@ void Discretisation::paramToVBO(QVector<float> colors)
                 }
         }
 }
+
+float Discretisation::getStep() const
+{
+    return step;
+}
+
+void Discretisation::setStep(float value)
+{
+    step = value;
+}

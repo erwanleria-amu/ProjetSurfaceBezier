@@ -28,10 +28,14 @@ public:
     void setNbCol(int i);
     int getNbCol();
     void upd();
-    Point setDeplacementPoint(float u, float v);
+    Point setDeplacementPoint(float u, float v, void* obj);
     void setU(float _u);
     void setV(float _v);
     void setSizeChanged();
+    void setStep(double d);
+
+    Discretisation *curDiscreteObj;
+
 public slots:
 
 signals:  // On ne les implémente pas, elles seront générées par MOC ;
@@ -59,14 +63,12 @@ private:
 	QTimer *m_timer = nullptr;
 	double m_ratio = 1;
 
-    Discretisation *curDiscreteObj;
-
     QVector<GLfloat> vertData;
 
     Point deplacement;
     int nbCol = 4;
-    bool sizeChanged = true;
-    float u,v;
+    bool sizeChanged = false;
+    float u,v, step = 0.05f;
 
 	//RR matrices utiles
 	QMatrix4x4 m_modelView;

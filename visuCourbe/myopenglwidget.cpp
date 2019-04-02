@@ -53,6 +53,7 @@ void myOpenGLWidget::initializeGL()
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
 
+    pointsCtrl = surface::CreateControlPoint(nbCol);
     makeGLObjects();
 
     //shaders
@@ -209,12 +210,13 @@ void myOpenGLWidget::makeGLObjects()
 
     //TEST CARREAUX BEZIERS
     //1 Nos objets géométriques
-    srand(time(nullptr));
-
-    surface c;
-    pointsCtrl = c.CreateControlPoint(nbCol);
 
     //QVector<Point> vertices = c.surfBez(points,0.05,sqrt(nbCol*nbCol));
+
+    if(sizeChanged){
+        sizeChanged = false;
+        pointsCtrl = surface::CreateControlPoint(nbCol);
+    }
 
     //Discrétisation de la surface à partir des points de controle
     //précédemment créés
@@ -222,7 +224,7 @@ void myOpenGLWidget::makeGLObjects()
     SurfacesBezier sb(&pointsCtrl);
     qDebug() << "sb points" << endl;
 
-    Discretisation *discreteSurfBez = new Discretisation(discretizeSurfBez, 0.05f); //Le deuxième argument est le pas des paramètres
+    Discretisation *discreteSurfBez = new Discretisation(discretizeSurfBez, step); //Le deuxième argument est le pas des paramètres
     qDebug() << "include discretefunc ok" << endl;
     this->curDiscreteObj = discreteSurfBez; //On indique la structure discrète utilisée pour le programme
 
@@ -235,12 +237,10 @@ void myOpenGLWidget::makeGLObjects()
 
     discreteSurfBez->paramToVBO(colors);   
 
-    if(sizeChanged){
-        setSizeChanged();
-        pointsCtrl = c.CreateControlPoint(nbCol);
-    }
+    //qDebug() << sizeChanged << endl;
 
-    deplacement = setDeplacementPoint(u,v);
+    deplacement = setDeplacementPoint(u, v, &sb);
+
     vertData.push_back(deplacement.getX());
     vertData.push_back(deplacement.getY());
     vertData.push_back(deplacement.getZ());
@@ -325,7 +325,7 @@ void myOpenGLWidget::paintGL()
     glDrawArrays(GL_POINTS, 0, nbCol*nbCol+1);
 
     glPointSize (2.0f);
-    glDrawArrays(GL_POINTS, nbCol*nbCol, curDiscreteObj->paramPoints->length());
+    glDrawArrays(GL_POINTS, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
 
     m_program->disableAttributeArray("posAttr");
     m_program->disableAttributeArray("colAttr");
@@ -354,13 +354,11 @@ void myOpenGLWidget::keyPressEvent(QKeyEvent *ev)
     }
 }
 
-Point myOpenGLWidget::setDeplacementPoint(float u, float v){
+Point myOpenGLWidget::setDeplacementPoint(float u, float v, void* obj){
 
     surface s;
     qDebug() << "test1" << endl;
-    Point p = s.bernPoint(pointsCtrl,u,v,nbCol);
-    //
-    qDebug() << "test2" << endl;
+    Point p = discretizeSurfBez(u, v, obj); //s.bernPoint(*curDiscreteObj->paramPoints, u, v, nbCol);
     return p;
 }
 
@@ -396,7 +394,12 @@ void myOpenGLWidget::setNbCol(int i){
 }
 
 void myOpenGLWidget::setSizeChanged(){
-    sizeChanged = !sizeChanged;
+    sizeChanged = true;
+}
+
+void myOpenGLWidget::setStep(double d)
+{
+    step = d;
 }
 
 int myOpenGLWidget::getNbCol(){

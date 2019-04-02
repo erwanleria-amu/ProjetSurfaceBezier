@@ -6,7 +6,7 @@
 
 #include "point.h"
 
-typedef union _function_i_params //Fonction à i paramètres
+typedef union _function_i_params //Fonction à i paramètres (exemple segment 1 paramètre, courbes 2 paramètres)
 {
     Point (*f1)(float s, void *obj);
     Point (*f2)(float s, float t, void *obj);
@@ -26,6 +26,9 @@ public:
     void paramToVBO(QVector<float> colors);
     QVector<Point> * paramPoints;
     QVector<float> VBO;
+
+    float getStep() const;
+    void setStep(float value);
 
 private:
     f_param f;

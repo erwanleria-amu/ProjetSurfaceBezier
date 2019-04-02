@@ -43,7 +43,7 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 {
-    ui->openGLWidget->setU((float) position/100);
+    ui->openGLWidget->setU((float) (1/ui->openGLWidget->curDiscreteObj->getStep()) * position/100 * ui->openGLWidget->curDiscreteObj->getStep());
     ui->openGLWidget->upd();
 }
 
@@ -51,6 +51,15 @@ void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-    ui->openGLWidget->setV((float) position/100);
+    ui->openGLWidget->setV((float) (1/ui->openGLWidget->curDiscreteObj->getStep()) * position/100 * ui->openGLWidget->curDiscreteObj->getStep());
+    ui->openGLWidget->upd();
+}
+
+void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
+{
+    if(arg1 > 1)
+        arg1 = 1;
+
+    ui->openGLWidget->setStep(arg1);
     ui->openGLWidget->upd();
 }
