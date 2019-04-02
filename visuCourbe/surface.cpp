@@ -11,22 +11,12 @@ surface::surface()
 //Non utilisée
 QVector<Point> surface::surfBez(QVector<Point> points, float t, int nbcol)
 {
-    courbe c;
+
     QVector<Point> vecPts;
-    Point pt ;
-    pt.setX(0);
-    pt.setY(0);
-    pt.setZ(0);
-    for (float var = 0; var <= 1+t; var+=t) {
-        for (float var2 = 0; var2 <= 1+t; var2+=t) {
-            Point tmpoint = pt;
-            for (int i = 0; i < nbcol; ++i) {
-                for (int j = 0; j < nbcol; ++j) {
-                    Point mul = points[i*nbcol+j];
-                    int degre = nbcol - 1;
-                    tmpoint = tmpoint + (mul * c.bern(i,degre,var) * c.bern(j,degre,var2)) ;
-                }
-            }
+
+    for (float u = 0; u <= 1+t; u+=t) {
+        for (float v = 0; v <= 1+t; v+=t) {
+            Point tmpoint = bernPoint(points,u,v,nbcol);
             vecPts.push_back(tmpoint);
         }
     }
@@ -36,16 +26,34 @@ QVector<Point> surface::surfBez(QVector<Point> points, float t, int nbcol)
     return  vecPts;
 }
 
+Point surface::bernPoint(QVector<Point> points, float u, float v, int nbcol){
+    Point pt ;
+    courbe c;
+    pt.setX(0);
+    pt.setY(0);
+    pt.setZ(0);
+    Point tmpoint = pt;
+    for (int i = 0; i < nbcol; ++i) {
+        for (int j = 0; j < nbcol; ++j) {
+            Point mul = points[i*nbcol+j];
+            int degre = nbcol - 1;
+            tmpoint = tmpoint + (mul * c.bern(i,degre,u) * c.bern(j,degre,v)) ;
+        }
+    }
+
+    return tmpoint;
+}
+
 QVector<Point> surface::CreateControlPoint(int nbCol){
     QVector<Point> points;
     Point p;
     for (float i = -1.f; i < 1.f; i += (2.f/nbCol)) {
         for (float j = -1.f; j < 1.f; j += (2.f/nbCol)) {
             p.setX(i);
-            p.setY((float)( rand() % 50) / 100);
+            p.setY((float)( rand() % 100) / 100);
             p.setZ(j);
             points.push_back(p);
-            qDebug() << i << " " << j << endl;
+            //qDebug() << i << " " << j << endl;
         }
     }
     return points;

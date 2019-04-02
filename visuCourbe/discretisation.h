@@ -6,18 +6,29 @@
 
 #include "point.h"
 
+typedef union _function_i_params //Fonction à i paramètres
+{
+    Point (*f1)(float s, void *obj);
+    Point (*f2)(float s, float t, void *obj);
+
+    ~_function_i_params() {} // needs to know which member is active, only possible in union-like class
+}f_param;
 
 class Discretisation
 {
 public:
     Discretisation(Point (*f)(float s, void *obj), float step);
+    Discretisation(Point (*f)(float s, float t, void *obj), float step);
+
     void paramCompute(void *obj);
+    void paramsCompute2(void * obj);
+
     void paramToVBO(QVector<float> colors);
     QVector<Point> * paramPoints;
     QVector<float> VBO;
 
 private:
-    Point (*f)(float s, void *obj);
+    f_param f;
     float step;
 };
 

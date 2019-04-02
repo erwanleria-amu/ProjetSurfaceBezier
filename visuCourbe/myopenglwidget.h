@@ -24,8 +24,14 @@ class myOpenGLWidget : public QOpenGLWidget,
 
 public:
 	explicit myOpenGLWidget(QWidget *parent = nullptr);
-	~myOpenGLWidget();
-
+    ~myOpenGLWidget();
+    void setNbCol(int i);
+    int getNbCol();
+    void upd();
+    Point setDeplacementPoint(float u, float v);
+    void setU(float _u);
+    void setV(float _v);
+    void setSizeChanged();
 public slots:
 
 signals:  // On ne les implémente pas, elles seront générées par MOC ;
@@ -44,15 +50,21 @@ protected:
 	void mousePressEvent(QMouseEvent *ev) override;
 	void mouseReleaseEvent(QMouseEvent *ev) override;
 	void mouseMoveEvent(QMouseEvent *ev) override;
+    QVector<Point> pointsCtrl;
 
 private:
 	double m_angle = 0;
 	QTimer *m_timer = nullptr;
 	double m_ratio = 1;
 
-
-    int ctrlPts = 10;
     Discretisation *curDiscreteObj;
+
+    QVector<GLfloat> vertData;
+
+    Point deplacement;
+    int nbCol = 4;
+    bool sizeChanged = true;
+    float u,v;
 
 	//RR matrices utiles
 	QMatrix4x4 m_modelView;
