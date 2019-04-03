@@ -100,11 +100,11 @@ Point discretizeSurfBez(float s, float t, void * obj)
     pt.setY(0);
     pt.setZ(0);
     Point tmpoint = pt;
-
-    for (int i = 0; i < ((SurfacesBezier *) obj)->n; ++i) {
-        for (int j = 0; j < ((SurfacesBezier *) obj)->n; ++j) {
-            Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* (((SurfacesBezier *) obj)->n) +j];
-            tmpoint = tmpoint + (mul * Courbes::bern(i, (((SurfacesBezier *) obj)->n-1) , s) * Courbes::bern(j, (((SurfacesBezier *) obj)->n-1), t)) ;
+    int nbCol = ((SurfacesBezier *) obj)->n;
+    for (int i = 0; i < nbCol; ++i) {
+        for (int j = 0; j < nbCol ; ++j) {
+            Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* nbCol +j];
+            tmpoint = tmpoint + (mul * Courbes::bern(i, nbCol-1 , s) * Courbes::bern(j, nbCol-1, t)) ;
         }
     }
     return  tmpoint;
@@ -113,100 +113,6 @@ Point discretizeSurfBez(float s, float t, void * obj)
 void myOpenGLWidget::makeGLObjects()
 {
 
-#if 0 //TEST SEGMENT (obsolete car fonctions modifiées)
-	//1 Nos objets géométriques
-	Point A, B;
-	float * coord = new float[3];
-
-    coord[0] = 0.0f;
-    coord[1] = 0.0f;
-    coord[2] = 0.0f;
-
-    A.set (coord);
-
-    coord[0] = 1.0f;
-    coord[1] = 0.0f;
-    coord[2] = 0.0f;
-
-    B.set(coord);
-
-    Segment S;
-    S.setStart(A);
-    S.setEnd(B);
-
-    delete [] coord;
-
-    //qDebug() << "segment length " << S.length ();
-
-    //2 Traduction en tableaux de floats
-    GLfloat * vertices = new GLfloat[9]; //2 sommets
-    GLfloat * colors = new GLfloat[9]; //1 couleur (RBG) par sommet
-
-    Point begin, end;
-    float * values = new float[3];
-
-    begin = S.getStart ();
-    begin.get(values);
-    for (unsigned i=0; i<3; ++i)
-        vertices[i] = values[i];
-
-    end = S.getEnd ();
-    end.get(values);
-    for (unsigned i=0; i<3; ++i)
-        vertices[3+i] = values[i];
-
-    delete[] values;
-
-    //couleur0 = rouge
-    colors[0] = 1.0;
-    colors[1] = 0.0;
-    colors[2] = 0.0;
-
-    //violet
-    colors[3] = 1.0;
-    colors[4] = 0.0;
-    colors[5] = 1.0;
-
-    //bleu
-    colors[6] = 0.0;
-    colors[7] = 0.0;
-    colors[8] = 1.0;
-
-
-
-    Discretisation discreteSegment(discretizeSeg, 0.5f);
-    discreteSegment.paramCompute((void*) (&S));
-
-    //3 spécialisation OpenGL
-    QVector<GLfloat> vertData;
-    for (int i = 0; i < 3; ++i) { //2 sommets
-        // coordonnées sommets
-        vertData.append(discreteSegment.paramPoints->data()[i].getX());
-        vertData.append(discreteSegment.paramPoints->data()[i].getY());
-        vertData.append(discreteSegment.paramPoints->data()[i].getZ());
-        // couleurs sommets
-        for (int j = 0; j < 3; j++) //1 RGB par sommet
-            vertData.append(colors[i*3+j]);
-
-    }
-
-    QVector<GLfloat> rgb;
-
-    for(int i = 0 ; i < 9 ; i++)
-        rgb.append(colors[i]);
-
-    discreteSegment.paramToVBO(rgb);
-    //destruction des éléments de la phase 2
-    delete [] vertices;
-    delete [] colors;
-
-    m_vbo.create();
-    m_vbo.bind();
-
-    //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
-    m_vbo.allocate(discreteSegment.VBO.constData(), discreteSegment.VBO.count() * sizeof(GLfloat));
-
-#endif
 
     //TEST CARREAUX BEZIERS
     //1 Nos objets géométriques
@@ -258,13 +164,13 @@ void myOpenGLWidget::makeGLObjects()
         }
     }
 
+    vertData.append(discreteSurfBez->VBO);
 
     m_vbo.create();
     m_vbo.bind();
 
     //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
     //qDebug() << "makegl " << discreteSurfBez->VBO.count() << endl;
-    vertData.append(discreteSurfBez->VBO);
     m_vbo.allocate(vertData.data(), vertData.count() * sizeof(GLfloat));
 }
 
@@ -321,11 +227,11 @@ void myOpenGLWidget::paintGL()
     m_program->enableAttributeArray("posAttr");
     m_program->enableAttributeArray("colAttr");
 
+    //pouvoir choisir montrer cacher points de controles
     glPointSize (5.0f);
-    glDrawArrays(GL_POINTS, 0, nbCol*nbCol+1);
-
+    glDrawArrays(GL_POLYGON_SMOOTH, 0, nbCol*nbCol+1);
     glPointSize (2.0f);
-    glDrawArrays(GL_POINTS, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
+    glDrawArrays(GL_LINES, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
 
     m_program->disableAttributeArray("posAttr");
     m_program->disableAttributeArray("colAttr");
@@ -408,6 +314,7 @@ int myOpenGLWidget::getNbCol(){
 
 void myOpenGLWidget::upd(){
     makeGLObjects();
+    m_angle = 0;
     update();
 }
 
