@@ -100,11 +100,11 @@ Point discretizeSurfBez(float s, float t, void * obj)
     pt.setY(0);
     pt.setZ(0);
     Point tmpoint = pt;
-
-    for (int i = 0; i < ((SurfacesBezier *) obj)->n; ++i) {
-        for (int j = 0; j < ((SurfacesBezier *) obj)->n; ++j) {
-            Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* (((SurfacesBezier *) obj)->n) +j];
-            tmpoint = tmpoint + (mul * Courbes::bern(i, (((SurfacesBezier *) obj)->n-1) , s) * Courbes::bern(j, (((SurfacesBezier *) obj)->n-1), t)) ;
+    int nbCol = ((SurfacesBezier *) obj)->n;
+    for (int i = 0; i < nbCol; ++i) {
+        for (int j = 0; j < nbCol ; ++j) {
+            Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* nbCol +j];
+            tmpoint = tmpoint + (mul * Courbes::bern(i, nbCol-1 , s) * Courbes::bern(j, nbCol-1, t)) ;
         }
     }
     return  tmpoint;
@@ -112,15 +112,17 @@ Point discretizeSurfBez(float s, float t, void * obj)
 
 void myOpenGLWidget::makeGLObjects()
 {
+
     //TEST CARREAUX BEZIERS
     //1 Nos objets géométriques
 
-    //QVector<Point> vertices = c.surfBez(points,0.05,sqrt(nbCol*nbCol));
-
+    //Si le nombre de points de contrôle (initialisés dans initializeGL) change alors on les récrée,
+    //sinon le maillage reste inchangé
     if(sizeChanged){
         sizeChanged = false;
         pointsCtrl = surface::CreateControlPoint(nbCol);
     }
+
 
     //Discrétisation de la surface à partir des points de controle
     //précédemment créés
@@ -128,18 +130,57 @@ void myOpenGLWidget::makeGLObjects()
     SurfacesBezier sb(&pointsCtrl);
     qDebug() << "sb points" << endl;
 
-    Discretisation *discreteSurfBez = new Discretisation(discretizeSurfBez, step); //Le deuxième argument est le pas des paramètres
-    qDebug() << "include discretefunc ok" << endl;
-    this->curDiscreteObj = discreteSurfBez; //On indique la structure discrète utilisée pour le programme
+    Discretisation *discreteSurfBez = nullptr;
 
-    discreteSurfBez->paramsCompute2((void *) &sb);
+    if(modeChanged)
+    {
+        if(stepChanged)
+        {
+            discreteSurfBez = new Discretisation(discretizeSurfBez, step); //Le deuxième argument est le pas des paramètres
+            discreteSurfBez->setMODE(curDiscreteObj->getMODE());
+            discreteSurfBez->nextMODE(); //Le deuxième argument est le pas des paramètres
+            delete curDiscreteObj;
+            this->curDiscreteObj = discreteSurfBez; //On indique la structure discrète utilisée pour le programme
+
+        }
+
+        else {
+            curDiscreteObj->nextMODE(); //Le deuxième argument est le pas des paramètres
+            curDiscreteObj->clearBuffers();
+        }
+
+        setModeChanged(false);
+    }
+
+    else
+    {
+
+        if(curDiscreteObj == nullptr || stepChanged)
+        {
+            discreteSurfBez = new Discretisation(discretizeSurfBez, step); //Le deuxième argument est le pas des paramètres
+            this->curDiscreteObj = discreteSurfBez; //On indique la structure discrète utilisée pour le programme
+        }
+
+        else
+        {
+            curDiscreteObj->setStep(step);
+            curDiscreteObj->clearBuffers(); //On décharge les points de discrétisations crées ainsi que les points pour le vbo
+        }
+
+        qDebug() << "include discretefunc ok" << endl;
+    }
+
+    //MODE D'AFFICHAGE
+    //discreteSurfBez->setMODE(TRIANGLES);
+
+    curDiscreteObj->paramsCompute2((void *) &sb);
     qDebug() << "compute params ok" << endl;
 
     QVector<float> colors;
     colors.push_back(1); colors.push_back(0); colors.push_back(0);
     qDebug() << "colors OK" << endl;
 
-    discreteSurfBez->paramToVBO(colors);   
+    curDiscreteObj->paramToVBO(colors);
 
     //qDebug() << sizeChanged << endl;
 
@@ -162,13 +203,13 @@ void myOpenGLWidget::makeGLObjects()
         }
     }
 
+    vertData.append(curDiscreteObj->VBO);
 
     m_vbo.create();
     m_vbo.bind();
 
     //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
     //qDebug() << "makegl " << discreteSurfBez->VBO.count() << endl;
-    vertData.append(discreteSurfBez->VBO);
     m_vbo.allocate(vertData.data(), vertData.count() * sizeof(GLfloat));
 }
 
@@ -225,11 +266,21 @@ void myOpenGLWidget::paintGL()
     m_program->enableAttributeArray("posAttr");
     m_program->enableAttributeArray("colAttr");
 
+    //pouvoir choisir montrer cacher points de controles
     glPointSize (5.0f);
     glDrawArrays(GL_POINTS, 0, nbCol*nbCol+1);
 
-    glPointSize (2.0f);
-    glDrawArrays(GL_POINTS, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
+    if(curDiscreteObj->getMODE() == QUADS || curDiscreteObj->getMODE() == TRIANGLES)
+    {
+        glPointSize (2.0f);
+        glDrawArrays(GL_LINES, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
+    }
+
+    else
+    {
+        glPointSize (2.0f);
+        glDrawArrays(GL_POINTS, nbCol*nbCol+1, curDiscreteObj->paramPoints->length());
+    }
 
     m_program->disableAttributeArray("posAttr");
     m_program->disableAttributeArray("colAttr");
@@ -254,6 +305,12 @@ void myOpenGLWidget::keyPressEvent(QKeyEvent *ev)
         else m_timer->start();
         break;
     case Qt::Key_R :
+        break;
+
+    case Qt::Key_Space :
+        setModeChanged(true);
+        makeGLObjects();
+        update();
         break;
     }
 }
@@ -286,6 +343,16 @@ void myOpenGLWidget::mouseMoveEvent(QMouseEvent *ev)
     qDebug() << __FUNCTION__ << ev->x() << ev->y();
 }
 
+bool myOpenGLWidget::getModeChanged() const
+{
+    return modeChanged;
+}
+
+void myOpenGLWidget::setModeChanged(bool value)
+{
+    modeChanged = value;
+}
+
 void myOpenGLWidget::onTimeout()
 {
     qDebug() << __FUNCTION__ ;
@@ -312,6 +379,7 @@ int myOpenGLWidget::getNbCol(){
 
 void myOpenGLWidget::upd(){
     makeGLObjects();
+    m_angle = 0;
     update();
 }
 
@@ -324,99 +392,3 @@ void myOpenGLWidget::setV(float _v)
 {
     v = _v;
 }
-
-
-#if 0 //TEST SEGMENT (obsolete car fonctions modifiées)
-    //1 Nos objets géométriques
-    Point A, B;
-    float * coord = new float[3];
-
-    coord[0] = 0.0f;
-    coord[1] = 0.0f;
-    coord[2] = 0.0f;
-
-    A.set (coord);
-
-    coord[0] = 1.0f;
-    coord[1] = 0.0f;
-    coord[2] = 0.0f;
-
-    B.set(coord);
-
-    Segment S;
-    S.setStart(A);
-    S.setEnd(B);
-
-    delete [] coord;
-
-    //qDebug() << "segment length " << S.length ();
-
-    //2 Traduction en tableaux de floats
-    GLfloat * vertices = new GLfloat[9]; //2 sommets
-    GLfloat * colors = new GLfloat[9]; //1 couleur (RBG) par sommet
-
-    Point begin, end;
-    float * values = new float[3];
-
-    begin = S.getStart ();
-    begin.get(values);
-    for (unsigned i=0; i<3; ++i)
-        vertices[i] = values[i];
-
-    end = S.getEnd ();
-    end.get(values);
-    for (unsigned i=0; i<3; ++i)
-        vertices[3+i] = values[i];
-
-    delete[] values;
-
-    //couleur0 = rouge
-    colors[0] = 1.0;
-    colors[1] = 0.0;
-    colors[2] = 0.0;
-
-    //violet
-    colors[3] = 1.0;
-    colors[4] = 0.0;
-    colors[5] = 1.0;
-
-    //bleu
-    colors[6] = 0.0;
-    colors[7] = 0.0;
-    colors[8] = 1.0;
-
-
-
-    Discretisation discreteSegment(discretizeSeg, 0.5f);
-    discreteSegment.paramCompute((void*) (&S));
-
-    //3 spécialisation OpenGL
-    QVector<GLfloat> vertData;
-    for (int i = 0; i < 3; ++i) { //2 sommets
-        // coordonnées sommets
-        vertData.append(discreteSegment.paramPoints->data()[i].getX());
-        vertData.append(discreteSegment.paramPoints->data()[i].getY());
-        vertData.append(discreteSegment.paramPoints->data()[i].getZ());
-        // couleurs sommets
-        for (int j = 0; j < 3; j++) //1 RGB par sommet
-            vertData.append(colors[i*3+j]);
-
-    }
-
-    QVector<GLfloat> rgb;
-
-    for(int i = 0 ; i < 9 ; i++)
-        rgb.append(colors[i]);
-
-    discreteSegment.paramToVBO(rgb);
-    //destruction des éléments de la phase 2
-    delete [] vertices;
-    delete [] colors;
-
-    m_vbo.create();
-    m_vbo.bind();
-
-    //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
-    m_vbo.allocate(discreteSegment.VBO.constData(), discreteSegment.VBO.count() * sizeof(GLfloat));
-
-#endif

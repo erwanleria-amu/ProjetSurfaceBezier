@@ -34,7 +34,13 @@ public:
     void setSizeChanged();
     void setStep(double d);
 
-    Discretisation *curDiscreteObj;
+    Discretisation *curDiscreteObj = nullptr;
+
+    bool getModeChanged() const;
+    void setModeChanged(bool value);
+
+    bool getStepChanged() const;
+    void setStepChanged(bool value);
 
 public slots:
 
@@ -68,6 +74,8 @@ private:
     Point deplacement;
     int nbCol = 4;
     bool sizeChanged = false;
+    bool modeChanged = false;
+    bool stepChanged = false;
     float u,v, step = 0.05f;
 
 	//RR matrices utiles
