@@ -31,7 +31,7 @@ void Discretisation::paramsCompute2(void * obj)
         for(float t = 0 ; t <= 1; t += step)
         {
             paramPoints->append(f.f2(s, t, obj));
-            qDebug() << "test" << endl;
+//            qDebug() << "test" << endl;
             if(MODE == QUADS || MODE == TRIANGLES)
             {
                 paramPoints->append(f.f2(s+step, t, obj));

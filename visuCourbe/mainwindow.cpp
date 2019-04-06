@@ -63,3 +63,11 @@ void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
     ui->openGLWidget->setStep(arg1);
     ui->openGLWidget->upd();
 }
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    int index = disp_mode(ui->openGLWidget->curDiscreteObj->getMODE());
+    ui->openGLWidget->curDiscreteObj->setMODE(disp_mode((index + 1) % 3));
+    qDebug() << index + 1 % 3 << endl;
+    ui->openGLWidget->upd();
+}

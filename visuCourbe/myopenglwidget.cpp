@@ -318,7 +318,6 @@ void myOpenGLWidget::keyPressEvent(QKeyEvent *ev)
 Point myOpenGLWidget::setDeplacementPoint(float u, float v, void* obj){
 
     surface s;
-    qDebug() << "test1" << endl;
     Point p = discretizeSurfBez(u, v, obj); //s.bernPoint(*curDiscreteObj->paramPoints, u, v, nbCol);
     return p;
 }

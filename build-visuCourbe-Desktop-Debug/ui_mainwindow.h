@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
@@ -40,6 +41,9 @@ public:
     QSlider *horizontalSlider_2;
     QLabel *label_3;
     QLabel *label_4;
+    QDoubleSpinBox *doubleSpinBox;
+    QLabel *label_5;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QMenu *menu;
     QToolBar *mainToolBar;
@@ -82,10 +86,24 @@ public:
         label_4 = new QLabel(centralWidget);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setGeometry(QRect(830, 430, 54, 17));
+        doubleSpinBox = new QDoubleSpinBox(centralWidget);
+        doubleSpinBox->setObjectName(QStringLiteral("doubleSpinBox"));
+        doubleSpinBox->setGeometry(QRect(720, 350, 71, 31));
+        doubleSpinBox->setDecimals(4);
+        doubleSpinBox->setMinimum(0);
+        doubleSpinBox->setMaximum(1);
+        doubleSpinBox->setSingleStep(0.01);
+        doubleSpinBox->setValue(0.05);
+        label_5 = new QLabel(centralWidget);
+        label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setGeometry(QRect(580, 360, 131, 16));
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(580, 320, 141, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 904, 22));
+        menuBar->setGeometry(QRect(0, 0, 904, 20));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         MainWindow->setMenuBar(menuBar);
@@ -116,6 +134,8 @@ public:
         label_2->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));
         label_3->setText(QString());
         label_4->setText(QString());
+        label_5->setText(QApplication::translate("MainWindow", "Pas de pr\303\251cision", Q_NULLPTR));
+        pushButton_3->setText(QApplication::translate("MainWindow", "Mode d'affichage", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", Q_NULLPTR));
     } // retranslateUi
 

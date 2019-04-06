@@ -47,7 +47,7 @@ public:
 
 private:
     f_param f;
-    disp_mode MODE = POINTS;
+    disp_mode MODE = TRIANGLES;
     float step;
 };
 
