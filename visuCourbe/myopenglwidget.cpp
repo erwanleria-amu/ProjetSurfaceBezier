@@ -8,7 +8,6 @@
 
 #include <iostream>
 
-#include "segment.h"
 
 static const QString vertexShaderFile   = ":/basic.vsh";
 static const QString fragmentShaderFile = ":/basic.fsh";
@@ -71,25 +70,6 @@ void myOpenGLWidget::doProjection()
 {
     //m_mod.setToIdentity();
     //modelMatrix.ortho( -aratio, aratio, -1.0f, 1.0f, -1.0f, 1.0f );
-}
-
-
-Point discretizeSeg(float s, void * obj)
-{
-    QVector<Point> p;
-    p.append(((Segment *) obj)->getStart());
-    p.append(((Segment *) obj)->getEnd());
-
-    float xa = p.data()[0].getX(), ya = p.data()[0].getY(), za = p.data()[0].getZ();
-    float xb = p.data()[1].getX(), yb = p.data()[1].getY(), zb = p.data()[1].getZ();
-
-    Point * n_paramPoint = new Point();
-
-    n_paramPoint->setX(((1-s)*xa) + s*xb);
-    n_paramPoint->setY(((1-s)*ya) + s*yb);
-    n_paramPoint->setZ(((1-s)*za) + s*zb);
-
-    return *n_paramPoint;
 }
 
 Point discretizeSurfBez(float s, float t, void * obj)

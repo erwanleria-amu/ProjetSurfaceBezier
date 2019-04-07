@@ -30,10 +30,8 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     myopenglwidget.cpp \
-    segment.cpp \
     point.cpp \
     discretisation.cpp \
-    courbe.cpp \
     courbes.cpp \
     surfacesbezier.cpp \
     surface.cpp
@@ -41,10 +39,8 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     myopenglwidget.h \
-    segment.h \
     point.h \
     discretisation.h \
-    courbe.h \
     courbes.h \
     surfacesbezier.h \
     surface.h

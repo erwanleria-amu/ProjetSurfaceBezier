@@ -53,10 +53,8 @@ OBJECTS_DIR   = ./
 SOURCES       = ../visuCourbe/main.cpp \
 		../visuCourbe/mainwindow.cpp \
 		../visuCourbe/myopenglwidget.cpp \
-		../visuCourbe/segment.cpp \
 		../visuCourbe/point.cpp \
 		../visuCourbe/discretisation.cpp \
-		../visuCourbe/courbe.cpp \
 		../visuCourbe/courbes.cpp \
 		../visuCourbe/surfacesbezier.cpp \
 		../visuCourbe/surface.cpp qrc_shaders.cpp \
@@ -65,10 +63,8 @@ SOURCES       = ../visuCourbe/main.cpp \
 OBJECTS       = main.o \
 		mainwindow.o \
 		myopenglwidget.o \
-		segment.o \
 		point.o \
 		discretisation.o \
-		courbe.o \
 		courbes.o \
 		surfacesbezier.o \
 		surface.o \
@@ -150,19 +146,15 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../visuCourbe/visuCourbe.pro ../visuCourbe/mainwindow.h \
 		../visuCourbe/myopenglwidget.h \
-		../visuCourbe/segment.h \
 		../visuCourbe/point.h \
 		../visuCourbe/discretisation.h \
-		../visuCourbe/courbe.h \
 		../visuCourbe/courbes.h \
 		../visuCourbe/surfacesbezier.h \
 		../visuCourbe/surface.h ../visuCourbe/main.cpp \
 		../visuCourbe/mainwindow.cpp \
 		../visuCourbe/myopenglwidget.cpp \
-		../visuCourbe/segment.cpp \
 		../visuCourbe/point.cpp \
 		../visuCourbe/discretisation.cpp \
-		../visuCourbe/courbe.cpp \
 		../visuCourbe/courbes.cpp \
 		../visuCourbe/surfacesbezier.cpp \
 		../visuCourbe/surface.cpp
@@ -350,8 +342,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../visuCourbe/shaders.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../visuCourbe/mainwindow.h ../visuCourbe/myopenglwidget.h ../visuCourbe/segment.h ../visuCourbe/point.h ../visuCourbe/discretisation.h ../visuCourbe/courbe.h ../visuCourbe/courbes.h ../visuCourbe/surfacesbezier.h ../visuCourbe/surface.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../visuCourbe/main.cpp ../visuCourbe/mainwindow.cpp ../visuCourbe/myopenglwidget.cpp ../visuCourbe/segment.cpp ../visuCourbe/point.cpp ../visuCourbe/discretisation.cpp ../visuCourbe/courbe.cpp ../visuCourbe/courbes.cpp ../visuCourbe/surfacesbezier.cpp ../visuCourbe/surface.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../visuCourbe/mainwindow.h ../visuCourbe/myopenglwidget.h ../visuCourbe/point.h ../visuCourbe/discretisation.h ../visuCourbe/courbes.h ../visuCourbe/surfacesbezier.h ../visuCourbe/surface.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../visuCourbe/main.cpp ../visuCourbe/mainwindow.cpp ../visuCourbe/myopenglwidget.cpp ../visuCourbe/point.cpp ../visuCourbe/discretisation.cpp ../visuCourbe/courbes.cpp ../visuCourbe/surfacesbezier.cpp ../visuCourbe/surface.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../visuCourbe/mainwindow.ui $(DISTDIR)/
 
 
@@ -452,13 +444,8 @@ myopenglwidget.o: ../visuCourbe/myopenglwidget.cpp ../visuCourbe/myopenglwidget.
 		../visuCourbe/point.h \
 		../visuCourbe/surfacesbezier.h \
 		../visuCourbe/courbes.h \
-		../visuCourbe/surface.h \
-		../visuCourbe/segment.h
+		../visuCourbe/surface.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o myopenglwidget.o ../visuCourbe/myopenglwidget.cpp
-
-segment.o: ../visuCourbe/segment.cpp ../visuCourbe/segment.h \
-		../visuCourbe/point.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o segment.o ../visuCourbe/segment.cpp
 
 point.o: ../visuCourbe/point.cpp ../visuCourbe/point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o point.o ../visuCourbe/point.cpp
@@ -466,10 +453,6 @@ point.o: ../visuCourbe/point.cpp ../visuCourbe/point.h
 discretisation.o: ../visuCourbe/discretisation.cpp ../visuCourbe/discretisation.h \
 		../visuCourbe/point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o discretisation.o ../visuCourbe/discretisation.cpp
-
-courbe.o: ../visuCourbe/courbe.cpp ../visuCourbe/courbe.h \
-		../visuCourbe/point.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o courbe.o ../visuCourbe/courbe.cpp
 
 courbes.o: ../visuCourbe/courbes.cpp ../visuCourbe/courbes.h \
 		../visuCourbe/point.h
@@ -481,8 +464,7 @@ surfacesbezier.o: ../visuCourbe/surfacesbezier.cpp ../visuCourbe/surfacesbezier.
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o surfacesbezier.o ../visuCourbe/surfacesbezier.cpp
 
 surface.o: ../visuCourbe/surface.cpp ../visuCourbe/surface.h \
-		../visuCourbe/point.h \
-		../visuCourbe/courbe.h
+		../visuCourbe/point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o surface.o ../visuCourbe/surface.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
