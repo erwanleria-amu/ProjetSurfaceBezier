@@ -3,13 +3,16 @@
 
 #include <QObject>
 #include <QWidget>
-
 #include <QKeyEvent>
 #include <QTimer>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include <QDebug>
+#include <QSurfaceFormat>
+#include <QMatrix4x4>
+#include <iostream>
 
 #include "discretisation.h"
 #include "surfacesbezier.h"

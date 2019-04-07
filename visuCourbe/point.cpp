@@ -1,4 +1,5 @@
 #include "point.h"
+//Cette classe permet de creer des points et d'effectuer toutes sortes d'opération sur les points
 
 Point::Point()
 {

@@ -14,6 +14,7 @@ typedef union _function_i_params //Fonction à i paramètres (exemple segment 1 
     ~_function_i_params() {} // needs to know which member is active, only possible in union-like class
 }f_param;
 
+//differents modes d'affichage du carreau
 typedef enum _display_mode
 {
     POINTS,
@@ -29,7 +30,6 @@ public:
     Discretisation(Point (*f)(float s, void *obj), float step, disp_mode m);
     Discretisation(Point (*f)(float s, float t, void *obj), float step, disp_mode m);
 
-    void paramCompute(void *obj);
     void paramsCompute2(void * obj);
 
     void paramToVBO(QVector<float> colors);
@@ -45,6 +45,7 @@ public:
 
     void clearBuffers();
 
+    Point discretizeSurfBez(float s, float t, void *obj);
 private:
     f_param f;
     disp_mode MODE = TRIANGLES;

@@ -17,14 +17,6 @@ Discretisation::Discretisation(Point (*f)(float s, float t, void *obj), float st
     this->paramPoints = new QVector<Point>;
 }
 
-void Discretisation::paramCompute(void * obj)
-{
-    for(float s = 0 ; s <= 1 ; s += step)
-    {
-        paramPoints->append(f.f1(s, obj));
-    }
-}
-
 /*
  * cette fonction permet de générer les points de discrétisation du
  * carreau de bezier et les stock dans le vecteur de points

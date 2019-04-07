@@ -2,12 +2,6 @@
 //tiré de CC-BY Edouard.Thiel@univ-amu.fr - 22/01/2019
 
 #include "myopenglwidget.h"
-#include <QDebug>
-#include <QSurfaceFormat>
-#include <QMatrix4x4>
-
-#include <iostream>
-
 
 static const QString vertexShaderFile   = ":/basic.vsh";
 static const QString fragmentShaderFile = ":/basic.fsh";
@@ -66,12 +60,6 @@ void myOpenGLWidget::initializeGL()
     }
 }
 
-void myOpenGLWidget::doProjection()
-{
-    //m_mod.setToIdentity();
-    //modelMatrix.ortho( -aratio, aratio, -1.0f, 1.0f, -1.0f, 1.0f );
-}
-
 Point discretizeSurfBez(float s, float t, void * obj)
 {
     QVector<Point> vecPts;
@@ -92,9 +80,6 @@ Point discretizeSurfBez(float s, float t, void * obj)
 
 void myOpenGLWidget::makeGLObjects()
 {
-
-    //TEST CARREAUX BEZIERS
-    //1 Nos objets géométriques
 
     //Si le nombre de points de contrôle (initialisés dans initializeGL) change alors on les récrée,
     //sinon le maillage reste inchangé
@@ -356,6 +341,11 @@ int myOpenGLWidget::getNbCol(){
     return nbCol;
 }
 
+/*
+ * cette fonction permet de mettre a jour a la fois le VBO et l'affichage a l'ecran
+ * "m_angle" est remis a 0 pour eviter des rotation du carreau si on change le nombre
+ * de points de controle ou si l'on deplace le point sur le carreau
+ */
 void myOpenGLWidget::upd(){
     makeGLObjects();
     m_angle = 0;

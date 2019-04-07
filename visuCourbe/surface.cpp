@@ -1,6 +1,4 @@
 #include "surface.h"
-#include "point.h"
-#include "qdebug.h"
 
 surface::surface()
 {

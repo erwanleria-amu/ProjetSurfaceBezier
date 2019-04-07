@@ -44,6 +44,9 @@ public:
     QDoubleSpinBox *doubleSpinBox;
     QLabel *label_5;
     QPushButton *pushButton_3;
+    QLabel *label_6;
+    QLabel *label_7;
+    QLabel *label_8;
     QMenuBar *menuBar;
     QMenu *menu;
     QToolBar *mainToolBar;
@@ -100,6 +103,15 @@ public:
         pushButton_3 = new QPushButton(centralWidget);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setGeometry(QRect(580, 320, 141, 23));
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setGeometry(QRect(10, 470, 231, 16));
+        label_7 = new QLabel(centralWidget);
+        label_7->setObjectName(QStringLiteral("label_7"));
+        label_7->setGeometry(QRect(10, 490, 221, 16));
+        label_8 = new QLabel(centralWidget);
+        label_8->setObjectName(QStringLiteral("label_8"));
+        label_8->setGeometry(QRect(10, 510, 311, 16));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -136,6 +148,9 @@ public:
         label_4->setText(QString());
         label_5->setText(QApplication::translate("MainWindow", "Pas de pr\303\251cision", Q_NULLPTR));
         pushButton_3->setText(QApplication::translate("MainWindow", "Mode d'affichage", Q_NULLPTR));
+        label_6->setText(QApplication::translate("MainWindow", "Z : incr\303\251mente la vitesse de rotation ", Q_NULLPTR));
+        label_7->setText(QApplication::translate("MainWindow", "A : active/d\303\251sactive la rotation", Q_NULLPTR));
+        label_8->setText(QApplication::translate("MainWindow", "Espace : change le mode d'affichage du carreau", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", Q_NULLPTR));
     } // retranslateUi
 
