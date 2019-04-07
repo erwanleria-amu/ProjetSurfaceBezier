@@ -72,7 +72,7 @@ Point discretizeSurfBez(float s, float t, void * obj)
     for (int i = 0; i < nbCol; ++i) {
         for (int j = 0; j < nbCol ; ++j) {
             Point mul = ((SurfacesBezier *) obj)->ptsCtrl.data()[i* nbCol +j];
-            tmpoint = tmpoint + (mul * Courbes::bern(i, nbCol-1 , s) * Courbes::bern(j, nbCol-1, t)) ;
+            tmpoint = tmpoint + (mul * Bernstein::bern(i, nbCol-1 , s) * Bernstein::bern(j, nbCol-1, t)) ;
         }
     }
     return  tmpoint;
@@ -136,7 +136,6 @@ void myOpenGLWidget::makeGLObjects()
     }
 
     //MODE D'AFFICHAGE
-    //discreteSurfBez->setMODE(TRIANGLES);
 
     curDiscreteObj->paramsCompute2((void *) &sb);
     qDebug() << "compute params ok" << endl;
@@ -147,8 +146,7 @@ void myOpenGLWidget::makeGLObjects()
 
     curDiscreteObj->paramToVBO(colors);
 
-    //qDebug() << sizeChanged << endl;
-
+    //Création et ajout au VBO du point qui se déplace sur le carreau
     deplacement = setDeplacementPoint(u, v, &sb);
 
     vertData.push_back(deplacement.getX());
@@ -159,6 +157,7 @@ void myOpenGLWidget::makeGLObjects()
     vertData.push_back(0);
     vertData.push_back(1);
 
+    //Ajout des points de controles au VBO
     for (int var = 0; var < pointsCtrl.size(); ++var) {
         vertData.push_back(pointsCtrl[var].getX());
         vertData.push_back(pointsCtrl[var].getY());
@@ -168,13 +167,12 @@ void myOpenGLWidget::makeGLObjects()
         }
     }
 
+    //Ajout des points de discrétisations au VBO
     vertData.append(curDiscreteObj->VBO);
 
     m_vbo.create();
     m_vbo.bind();
 
-    //qDebug() << "vertData " << vertData.count () << " " << vertData.data ();
-    //qDebug() << "makegl " << discreteSurfBez->VBO.count() << endl;
     m_vbo.allocate(vertData.data(), vertData.count() * sizeof(GLfloat));
 }
 

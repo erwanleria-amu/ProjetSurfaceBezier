@@ -16,7 +16,7 @@
 
 #include "discretisation.h"
 #include "surfacesbezier.h"
-#include "courbes.h"
+#include "Bernstein.h"
 #include "math.h"
 #include "surface.h"
 

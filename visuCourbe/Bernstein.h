@@ -1,15 +1,15 @@
-#ifndef COURBES_H
-#define COURBES_H
+#ifndef BERNSTEIN_H
+#define BERNSTEIN_H
 
 #include <QVector>
 #include "point.h"
 #include "math.h"
 #include "qdebug.h"
 
-class Courbes
+class Bernstein
 {
 public:
-    Courbes();
+    Bernstein();
     QVector <Point> courbeBez(QVector<Point> points, float t);
     static float bern(int i, int n, float t);
     static int fact (int i);

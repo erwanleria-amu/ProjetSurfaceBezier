@@ -32,18 +32,18 @@ SOURCES += \
     myopenglwidget.cpp \
     point.cpp \
     discretisation.cpp \
-    courbes.cpp \
     surfacesbezier.cpp \
-    surface.cpp
+    surface.cpp \
+    Bernstein.cpp
 
 HEADERS += \
         mainwindow.h \
     myopenglwidget.h \
     point.h \
     discretisation.h \
-    courbes.h \
     surfacesbezier.h \
-    surface.h
+    surface.h \
+    Bernstein.h
 
 FORMS += \
         mainwindow.ui

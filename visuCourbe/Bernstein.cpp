@@ -1,11 +1,11 @@
-#include "courbes.h"
+#include "Bernstein.h"
 
-Courbes::Courbes()
+Bernstein::Bernstein()
 {
 
 }
 
-int Courbes::fact(int i)
+int Bernstein::fact(int i)
 {
     int tmp = 1;
     if (i == 0){
@@ -17,7 +17,7 @@ int Courbes::fact(int i)
     return tmp;
 }
 
-float Courbes::bern(int i, int n, float t)
+float Bernstein::bern(int i, int n, float t)
 {
     float bern = (fact(n)/(fact(i)*fact(n-i)))*pow(t,i)*pow((1-t),n-i);
     return bern;

@@ -3,7 +3,7 @@
 
 #include <QVector>
 #include "point.h"
-#include "courbes.h"
+#include "Bernstein.h"
 
 class SurfacesBezier
 {
