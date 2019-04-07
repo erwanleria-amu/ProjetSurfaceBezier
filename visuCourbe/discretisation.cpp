@@ -1,4 +1,5 @@
 #include "discretisation.h"
+//Cette classe permet de générer les points de discrétisation du carreau de bezier
 
 Discretisation::Discretisation(Point (*f)(float s, void *obj), float step)
 {
@@ -24,14 +25,23 @@ void Discretisation::paramCompute(void * obj)
     }
 }
 
+/*
+ * cette fonction permet de générer les points de discrétisation du
+ * carreau de bezier et les stock dans le vecteur de points
+ * "paramPoints"
+ * Selon le mode d'affichage on ne va pas push les meme points
+ * (plus de points pour la représentation par triangles par exemple)
+ */
 void Discretisation::paramsCompute2(void * obj)
 {
-    for(float s = 0 ; s <= 1; s += step)
+    float last = 1;
+    if(MODE == POINTS)
+        last += step;
+    for(float s = 0 ; s <= last; s += step)
     {
-        for(float t = 0 ; t <= 1; t += step)
+        for(float t = 0 ; t <= last; t += step)
         {
             paramPoints->append(f.f2(s, t, obj));
-//            qDebug() << "test" << endl;
             if(MODE == QUADS || MODE == TRIANGLES)
             {
                 paramPoints->append(f.f2(s+step, t, obj));
@@ -55,7 +65,10 @@ void Discretisation::paramsCompute2(void * obj)
     }
 }
 
-
+/*
+ * cette fonction permet de mettre les points presents dans "paramPoint" dans un
+ * vecteur de float qui sera utiliser pour le VBO
+ */
 void Discretisation::paramToVBO(QVector<float> colors)
 {
     int n = paramPoints->count();
